@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mssql
+  labels:
+    app: mssql
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mssql
+  template:
+    metadata:
+      labels:
+        app: mssql
+    spec:
+      containers:
+        - name: mssql
+          image: microsoft/mssql-server-linux:2017-latest 
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: SA_PASSWORD
+              value: yourStrong(!)Password
+          ports:
+            - name: mssql
+              containerPort: 1433
+          volumeMounts:
+            - name: mssql-persistent-storage
+              mountPath: /var/opt/mssql/data
+            - name: mssql-storage
+              mountPath: /var/opt/mssql
+            - name: mssql-bkp-persistent-storage
+              mountPath: /var/backups
+      volumes:
+        - name: mssql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mssql-data-claim
+        - name: mssql-storage
+          persistentVolumeClaim:
+            claimName: mssql-storage-claim
+        - name: mssql-bkp-persistent-storage
+          persistentVolumeClaim:
+            claimName: mssql-backup-claim
+

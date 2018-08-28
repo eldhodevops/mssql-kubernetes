@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mssql-storage-claim
+  labels:
+    app: mssql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: mssqlstorage
+  resources:
+    requests:
+      storage: 20Gi
